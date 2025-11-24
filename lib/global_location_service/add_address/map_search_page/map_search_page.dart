@@ -86,7 +86,25 @@ class _MapSearchPageState extends State<MapSearchPage> {
             initialCameraPosition: CameraPosition(target: currentPos,zoom: 16),
             markers: marker != null ? {marker!} : {},
             onMapCreated: (controller) => mapController = controller,
+            myLocationButtonEnabled: false,
+            myLocationEnabled: true,
             onTap: updateMap, // Tapping anywhere on the map will place a new marker
+          ),
+          // >>> Floating Button
+          Positioned(
+            bottom: 180,
+            right: 20,
+            child: FloatingActionButton(
+              onPressed: () async {
+                Position pos = await Geolocator.getCurrentPosition();
+                LatLng latLng = LatLng(pos.latitude, pos.longitude);
+                mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 16));
+                setState(() {
+                  marker = Marker(markerId: const MarkerId("current"), position: latLng);
+                });
+              },
+              child: const Icon(Icons.my_location),
+            ),
           ),
           /// <<< Show Google Map ==============================================
 

@@ -41,10 +41,10 @@ App**!\
 
 <table>
   <tr>
-    <td><img src="assets/img.png" width="24%"/></td>
-    <td><img src="assets/img_1.png" width="24%"/></td>
-    <td><img src="assets/img_2.png" width="24%"/></td>
-    <td><img src="assets/img_3.png" width="24%"/></td>
+    <td><img src="assets/img.png" width="50%"/></td>
+    <td><img src="assets/img_1.png" width="50%"/></td>
+    <td><img src="assets/img_2.png" width="50%"/></td>
+    <td><img src="assets/img_3.png" width="50%"/></td>
   </tr>
 </table>
 

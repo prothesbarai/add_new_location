@@ -39,16 +39,14 @@ App**!\
 
 চারটি স্ক্রিনশট এক লাইনে প্রদর্শন:
 
-```{=html}
-<p align="center">
-```
-`<img src="assets/img.png" width="22%" />`{=html}
-`<img src="assets/img.png" width="22%" />`{=html}
-`<img src="assets/img.png" width="22%" />`{=html}
-`<img src="assets/img.png" width="22%" />`{=html}
-```{=html}
-</p>
-```
+<table>
+  <tr>
+    <td><img src="assets/img.png" width="24%"/></td>
+    <td><img src="assets/img_1.png" width="24%"/></td>
+    <td><img src="assets/img_2.png" width="24%"/></td>
+    <td><img src="assets/img_3.png" width="24%"/></td>
+  </tr>
+</table>
 
 ------------------------------------------------------------------------
 

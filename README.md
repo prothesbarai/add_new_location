@@ -167,6 +167,20 @@ flutter run
                        ✔ Maps Static API (optional)
              ➡ এটাই 100% Perfect Android Production Setup
             <hr>
+            🔵 B) iOS (Production)
+                    Application restrictions → iOS apps
+                    এখানে:
+                        iOS Bundle ID দিবে (e.g. com.prothes.mapapp.ios)
+                        API Restrictions → Restrict key
+                    Select:
+                       ✔ Maps SDK for iOS
+                       ✔ Places API
+                       ✔ Geocoding API
+                       ✔ Directions API
+                       ✔ Places API (New)
+                       ✔ Maps Static API (optional)
+                    ➡ iOS Production fully secured.
+                 <hr>
       </pre>
 - 5️⃣ পরবর্তী step : Create চাপো → copy করা key নিয়ে Flutter code এ বসাও:
 

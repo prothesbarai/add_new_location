@@ -102,6 +102,50 @@ flutter run
      <pre>
       Google Maps, Places API, Directions API, Geocoding → এগুলোর জন্য শুধু normal API key লাগে।
       ❌ Service account ব্যবহার করলে mobile app-এ নিরাপত্তা ঝুঁকি বাড়ে — কারণ service account key ফাঁস হলে বড় সমস্যা
+      🚨 কেন Mobile App-এ Service Account রাখা বিপজ্জনক?
+            মোবাইল অ্যাপ open source type →
+            APK extract করে →
+            → তার ভিতরের files/public assets →
+            → খুব সহজে কেউ দেখতে পারবে।
+       
+       যদি তুমি ভুল করে mobile app-এ service account JSON file দাও:
+       তখন হ্যাকার কী করতে পারবে?
+            ❌ তোমার বিনামূল্যে Google Cloud ব্যবহার করতে পারবে
+            ❌ Google Maps এর বিল লাখ টাকায় উঠতে পারে
+            ❌ Firebase database ডিলিট বা চেঞ্জ করতে পারে
+            ❌ Storage bucket wipe করে দিতে পারে
+            ❌ Service account দিয়ে তোমার পুরো project hack করতে পারবে   
+     কারণ:
+       👉 Service account = Full Admin Access
+       👉 Mobile app = Public
+       👉 যে কেউ key চুরি করতে পারবে
+       
+   🔥 Normal API Key কেন Safe?
+       Normal API Key safe কারণ:
+         (A) Restrictions দেওয়া যায়
+            Android package + SHA1
+            iOS bundle ID
+            Web domain
+            IP address
+            Allowed APIs list
+            যদি key leak হয়ে যায়, কেউ ব্যবহার করতে পারবে না।
+        (B) Normal API Key এর power limited
+            Billing system access নেই
+            Database admin নয়
+            Cloud project control নেই
+            Only Maps-related specific APIs access করতে পারে
+
+       ⭐ সহজ কথায় সারসংক্ষেপ:
+       🔐 Service Account
+            ➡ খুব Powerful
+            ➡ Server/back-end এর জন্য
+            ➡ Mobile app-এ দিলে হ্যাকার তোমার পুরো Google Cloud hack করতে পারবে
+            ➡ তাই Google strictly বলে: "NEVER put service account in mobile app"
+
+      🔑 Normal API Key
+            ➡ Client-side + Mobile app এর জন্য
+            ➡ Restriction দিয়ে 100% safe করা যায়
+            ➡ Maps, Places, Directions, Geocoding এর জন্য এটাই ব্যবহার করতে হবে
      </pre>
 - 3️⃣ Application restrictions : তুমি এখন None রেখেছো → test এর জন্য ঠিক আছে। পরে security increase করতে চাইলে Android/iOS restrict করতে হবে।
     <pre>
@@ -167,20 +211,23 @@ flutter run
                        ✔ Maps Static API (optional)
              ➡ এটাই 100% Perfect Android Production Setup
             <hr>
-            🔵 B) iOS (Production)
-                    Application restrictions → iOS apps
-                    এখানে:
-                        iOS Bundle ID দিবে (e.g. com.prothes.mapapp.ios)
-                        API Restrictions → Restrict key
+            🔵 C) WEB (Production)
+                 🔐 এখানে key leak এর chance বেশি—সুতরাং Web restriction MUST.
+                    Application restrictions → Websites
+                   এখানে domain গুলো দেবে:
+                        https://prothes.com
+                        https://www.prothes.com
+                    Localhost (development):
+                        http://localhost:3000
+                        http://127.0.0.1:3000
+                    API restrictions → Restrict key
                     Select:
-                       ✔ Maps SDK for iOS
-                       ✔ Places API
-                       ✔ Geocoding API
-                       ✔ Directions API
-                       ✔ Places API (New)
-                       ✔ Maps Static API (optional)
-                    ➡ iOS Production fully secured.
-                 <hr>
+                         ✔ Maps JavaScript API
+                         ✔ Places API
+                         ✔ Geolocation API
+                         ✔ Geocoding API
+                         ✔ Maps Static API (optional)
+                     ➡ Web Production নিরাপদ হবে।
       </pre>
 - 5️⃣ পরবর্তী step : Create চাপো → copy করা key নিয়ে Flutter code এ বসাও:
 

@@ -99,8 +99,10 @@ flutter run
 - APIs & Services → Credentials → Create Credentials → API key
 - 1️⃣ Name তুমি API key 1 দিলে চলবে। নাম শুধু internal reference এর জন্য।
 - 2️⃣ Authenticate API calls : সাধারণ Flutter map / search use এর জন্য unchecked রাখো। Service account দরকার নেই।
+     <pre>
       Google Maps, Places API, Directions API, Geocoding → এগুলোর জন্য শুধু normal API key লাগে।
       ❌ Service account ব্যবহার করলে mobile app-এ নিরাপত্তা ঝুঁকি বাড়ে — কারণ service account key ফাঁস হলে বড় সমস্যা
+     </pre>
 - 3️⃣ Application restrictions : তুমি এখন None রেখেছো → test এর জন্য ঠিক আছে। পরে security increase করতে চাইলে Android/iOS restrict করতে হবে।
     <pre>
        Application Restrictions — এটা কী?
@@ -124,7 +126,48 @@ flutter run
          iOS এর bundle ID দিতে হবে → শুধু ওই অ্যাপই key ব্যবহার করবে।
     </pre>
 - 4️⃣ API restrictions : তুমি Don't restrict key রেখেছো → সব API call যাবে। Later তুমি শুধু Maps SDK, Places API restrict করতে পারো।
-      
+       <pre>
+        API Restrictions — এটা কী? এটা control করে API key দিয়ে কোন কোন API call করা যাবে ?
+        ২টা অপশন:
+        🔓 Don't restrict key
+               সব Google API access পাবে
+               বড় security risk (key leak হলে অন্য কেউ AI, SMS, Map সব টাকা খরচ করে ফেলতে পারে)
+        🔐 Restrict key (recommended)
+               তুমি manually select করবে API
+               যেমন তুমি Flutter app-এ ব্যবহার করবে:
+                   ✔ Maps SDK for Android
+                   ✔ Places API
+                   ✔ Geocoding API
+                   ✔ Maps Static API
+               → তাহলে Google বলবে: এই key শুধু এই API গুলোতেই কাজ করবে।
+       </pre>
+- Check :
+       <pre>
+           🔥 Final Recommendation (Best Practice)
+            Development/test:
+                  ✔ None
+                  ✔ Don’t restrict (optional)
+            Production:
+                  ✔ Application restriction → Android apps
+                  ✔ API restriction → specific API (Maps, Places etc)
+                <hr>
+           🔵 A) ANDROID (Production)
+                  Application restrictions → Android apps
+                  এখানে:
+                       Package name (e.g. com.prothes.mapapp)
+                       SHA-1 certificate fingerprint
+                       দু'টাই দিতে হবে।
+                  API restrictions → Restrict key
+                  Then select:
+                       ✔ Maps SDK for Android
+                       ✔ Places API
+                       ✔ Geocoding API (optional)
+                       ✔ Directions API (optional)
+                       ✔ Places API (New)
+                       ✔ Maps Static API (optional)
+             ➡ এটাই 100% Perfect Android Production Setup
+            <hr>
+      </pre>
 - 5️⃣ পরবর্তী step : Create চাপো → copy করা key নিয়ে Flutter code এ বসাও:
 
 

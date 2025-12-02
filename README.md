@@ -102,6 +102,7 @@ flutter run
       Google Maps, Places API, Directions API, Geocoding → এগুলোর জন্য শুধু normal API key লাগে।
       ❌ Service account ব্যবহার করলে mobile app-এ নিরাপত্তা ঝুঁকি বাড়ে — কারণ service account key ফাঁস হলে বড় সমস্যা
 - 3️⃣ Application restrictions : তুমি এখন None রেখেছো → test এর জন্য ঠিক আছে। পরে security increase করতে চাইলে Android/iOS restrict করতে হবে।
+    <pre>
        Application Restrictions — এটা কী?
        এটা বলে দিচ্ছে API key কোথা থেকে ব্যবহার হবে।
        অপশনগুলো:
@@ -121,7 +122,7 @@ flutter run
          Need : Package: com.prothes.mapapp   & SHA1: DA:22:34:...
       🍏 iOS apps
          iOS এর bundle ID দিতে হবে → শুধু ওই অ্যাপই key ব্যবহার করবে।
-  
+    </pre>
 - 4️⃣ API restrictions : তুমি Don't restrict key রেখেছো → সব API call যাবে। Later তুমি শুধু Maps SDK, Places API restrict করতে পারো।
       
 - 5️⃣ পরবর্তী step : Create চাপো → copy করা key নিয়ে Flutter code এ বসাও:

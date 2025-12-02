@@ -99,8 +99,31 @@ flutter run
 - APIs & Services → Credentials → Create Credentials → API key
 - 1️⃣ Name তুমি API key 1 দিলে চলবে। নাম শুধু internal reference এর জন্য।
 - 2️⃣ Authenticate API calls : সাধারণ Flutter map / search use এর জন্য unchecked রাখো। Service account দরকার নেই।
+      Google Maps, Places API, Directions API, Geocoding → এগুলোর জন্য শুধু normal API key লাগে।
+      ❌ Service account ব্যবহার করলে mobile app-এ নিরাপত্তা ঝুঁকি বাড়ে — কারণ service account key ফাঁস হলে বড় সমস্যা
 - 3️⃣ Application restrictions : তুমি এখন None রেখেছো → test এর জন্য ঠিক আছে। পরে security increase করতে চাইলে Android/iOS restrict করতে হবে।
+       Application Restrictions — এটা কী?
+       এটা বলে দিচ্ছে API key কোথা থেকে ব্যবহার হবে।
+       অপশনগুলো:
+       🔵 None (তুমি এখন যে ব্যবহার করছো)
+          যেকোনো জায়গা থেকে API key ব্যবহার করা যাবে। Development/test phase এ এটা ঠিক আছে।
+          কিন্তু production-এ risky → কেউ তোমার key ব্যবহার করতে পারবে।
+       🌐 Websites
+         যদি API key শুধু Web site (domain) থেকে চালাতে চাই।
+         তখন তুমি domain দেবে → যেমন: https://prothes.com
+         Web ছাড়া অন্য জায়গা থেকে key কাজ করবে না।
+      🌍 IP addresses
+         Server থেকে API call হলে ব্যবহার হয়।
+         তুমি server এর IP দেবে → অন্য IP থেকে key চলবে না।
+      🤖 Android apps
+         Android app এর package name + SHA-1 certificate দিতে হবে।
+         মানে শুধু তোমার অ্যাপই key ব্যবহার করতে পারবে।
+         Need : Package: com.prothes.mapapp   & SHA1: DA:22:34:...
+      🍏 iOS apps
+         iOS এর bundle ID দিতে হবে → শুধু ওই অ্যাপই key ব্যবহার করবে।
+  
 - 4️⃣ API restrictions : তুমি Don't restrict key রেখেছো → সব API call যাবে। Later তুমি শুধু Maps SDK, Places API restrict করতে পারো।
+      
 - 5️⃣ পরবর্তী step : Create চাপো → copy করা key নিয়ে Flutter code এ বসাও:
 
 

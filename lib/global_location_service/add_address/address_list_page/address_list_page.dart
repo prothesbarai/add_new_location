@@ -11,15 +11,34 @@ class AddressListPage extends StatefulWidget {
 }
 
 class _AddressListPageState extends State<AddressListPage> {
-  int _selectedIndex = 0; // Default first item selected
+  String? _selectedId; // String type because UUID is string
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSelectedId();
+    });
+  }
+
+  void _loadSelectedId() {
     final provider = Provider.of<LocationProvider>(context, listen: false);
-    final savedIndex = provider.selectedDynamicAddressId;
-    if (savedIndex != null) {
-      _selectedIndex = savedIndex;
+    final allLocations = provider.allLocations;
+
+    if (allLocations.isNotEmpty) {
+      // First Check Saves ID
+      final savedIndex = provider.selectedDynamicAddressId;
+      if (savedIndex != null && savedIndex < allLocations.length) {
+        setState(() {
+          _selectedId = allLocations[savedIndex]['id'];
+        });
+      } else {
+        // Otherwise first select
+        setState(() {
+          _selectedId = allLocations[0]['id'];
+        });
+        provider.userSelectDynamicLocation(id: 0);
+      }
     }
   }
 
@@ -27,23 +46,20 @@ class _AddressListPageState extends State<AddressListPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<LocationProvider>(context);
     List<Map<String, dynamic>> addressList = List.from(provider.allLocations);
-    // Ensure selected index is within bounds
-    if (_selectedIndex >= addressList.length) _selectedIndex = 0;
-    // Move selected address to top
-    if (_selectedIndex != 0 && addressList.isNotEmpty) {
-      addressList.sort((a, b) {final aIndex = provider.allLocations.indexOf(a);return aIndex == _selectedIndex ? -1 : 1;});
-    }
+
+    // Selected BY ID
+    addressList.sort((a, b) {
+      if (a['id'] == _selectedId) return -1;
+      if (b['id'] == _selectedId) return 1;
+      return 0;
+    });
 
     IconData getIcon(String iconName) {
       switch (iconName) {
-        case 'home':
-          return Icons.home;
-        case 'work':
-          return Icons.work;
-        case 'favorite':
-          return Icons.favorite_border;
-        default:
-          return Icons.location_on_outlined;
+        case 'home': return Icons.home;
+        case 'work': return Icons.work;
+        case 'favorite': return Icons.favorite_border;
+        default: return Icons.location_on_outlined;
       }
     }
 
@@ -55,26 +71,46 @@ class _AddressListPageState extends State<AddressListPage> {
         itemCount: addressList.length,
         itemBuilder: (context, index) {
           final item = addressList[index];
-          final originalIndex = provider.allLocations.indexOf(item);
           return addressItem(
             icon: getIcon(item["icon"] ?? ""),
             title: item["title"] ?? "Home",
             address: item["street"] ?? "Unknown",
             note: item["note"] ?? "none",
-            isSelected: index == 0,
+            isSelected: item['id'] == _selectedId,
             onSelect: () async {
-              setState(() {_selectedIndex = originalIndex;});
-              await provider.userSelectDynamicLocation(id: originalIndex);
+              final index = provider.allLocations.indexWhere((loc) => loc['id'] == item['id']);
+              if (index != -1) {
+                setState(() {_selectedId = item['id'];});
+                await provider.userSelectDynamicLocation(id: index);
+              }
             },
             onDelete: () async {
-              final originalIndex = provider.allLocations.indexOf(item);
-              if (_selectedIndex == originalIndex) {ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Selected address cannot be removed."), duration: Duration(seconds: 2),),);return;}
-              if (provider.allLocations.length <= 1) {ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("At least one address must remain."), duration: Duration(seconds: 2),),);return;}
+              final provider = Provider.of<LocationProvider>(context, listen: false);
+              final allLocations = provider.allLocations;
+
+              // Find Item Index (Use Id)
+              final itemId = item['id'];
+              final originalIndex = allLocations.indexWhere((loc) => loc['id'] == itemId);
+              if (originalIndex == -1) return;
+
+              // Find Present Selected Item Index
+              final selectedIndex = allLocations.indexWhere((loc) => loc['id'] == _selectedId);
+
+              // Selected Item Cannot Remove
+              if (originalIndex == selectedIndex) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Selected address cannot be removed."), duration: Duration(seconds: 2),),);
+                return;
+              }
+              // must be have at least one item in your hive
+              if (allLocations.length <= 1) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("At least one address must remain."), duration: Duration(seconds: 2),),);
+                return;
+              }
+              // Now Delete
               await provider.deleteLocation(originalIndex);
-              if (_selectedIndex > originalIndex) {setState(() {_selectedIndex -= 1;});}
             },
             onEdit: () {
-              // Handle edit
+              // edit functions
             },
           );
         },

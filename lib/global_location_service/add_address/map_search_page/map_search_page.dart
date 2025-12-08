@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../location_provider/location_provider.dart';
 
 class MapSearchPage extends StatefulWidget {
   const MapSearchPage({super.key});
@@ -16,6 +20,9 @@ class _MapSearchPageState extends State<MapSearchPage> {
   GoogleMapController? mapController;
   Marker? marker;
   String selectedAddress = "Search to select location";
+  String selectedAddressName = "";
+  String selectedAddressSubLocality = "";
+  String selectedAddressSubTitle = "";
   LatLng currentPos = const LatLng(23.8103, 90.4125);
 
   @override
@@ -47,6 +54,9 @@ class _MapSearchPageState extends State<MapSearchPage> {
     final place = await placemarkFromCoordinates(pos.latitude, pos.longitude);
     setState(() {
       selectedAddress = "${place.first.name ?? ""} ${place.first.street ?? ""}".trim();
+      selectedAddressName = "${place.first.name}";
+      selectedAddressSubLocality = "${place.first.subLocality}";
+      selectedAddressSubTitle = "${place.first.locality}";
     });
   }
   /// <<< ============= UPDATE MAP LOCATION ====================================
@@ -55,7 +65,7 @@ class _MapSearchPageState extends State<MapSearchPage> {
   void _openSearch(){
     AwesomePlaceSearch(
         context: context,
-        apiKey: "YOUR_GOOGLE_MAPS_API_KEY",
+        apiKey: "AIzaSyCA2ARSBKTMjmRXpFdVBALJo6dF53hnS3E",
         hint: "Search your address",
         onTap: (Future<PredictionModel>value) async{
           PredictionModel place = await value;
@@ -71,7 +81,20 @@ class _MapSearchPageState extends State<MapSearchPage> {
 
 
   /// >>> Return location back to previous screen ==============================
-  void returnLocation(){Navigator.pop(context,{"name": selectedAddress, "lat": currentPos.latitude, "lng": currentPos.longitude,});}
+  void returnLocation() async{
+    final provider = Provider.of<LocationProvider>(context, listen: false);
+    await provider.addLocation({
+      'id': const Uuid().v4(), // Unique Id
+      'userLong': currentPos.longitude,
+      'userLat': currentPos.latitude,
+      'street': selectedAddressName,
+      'icon': 'home',
+      'areaName': selectedAddressSubLocality,
+      'title': selectedAddressSubTitle
+    });
+    if(!mounted) return;
+    Navigator.pop(context,{"name": selectedAddress, "lat": currentPos.latitude, "lng": currentPos.longitude,});
+  }
   /// <<< Return location back to previous screen ==============================
 
 

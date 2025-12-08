@@ -46,6 +46,7 @@ dependencies:
   google_maps_flutter: ^2.14.0
   geocoding: ^4.0.0
   awesome_place_search: ^2.1.0
+  uuid: ^4.5.2
 
 
 dev_dependencies:

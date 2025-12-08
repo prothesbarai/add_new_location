@@ -18,7 +18,7 @@
         <!-- Must Be Here (Inside application, not inside activity) For Location-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_GOOGLE_API_KEY"/>
+            android:value="AIzaSyCA2ARSBKTNjmRXpFdVNALJo1dF53hnS8B"/>
 
         <activity
             android:name=".MainActivity"

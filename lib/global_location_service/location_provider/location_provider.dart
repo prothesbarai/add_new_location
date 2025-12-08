@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 
 class LocationProvider with ChangeNotifier {
   String? _selectedAreaName;
@@ -9,7 +10,7 @@ class LocationProvider with ChangeNotifier {
   int? get selectedAreaId => _selectedAreaId;
   int? get selectedDynamicAddressId => _selectedDynamicAddressId;
   Box get _box => Hive.box("LocationBox");
-
+  final Uuid _uuid = const Uuid();
 
 
   LocationProvider(){
@@ -68,17 +69,37 @@ class LocationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<Map<String, dynamic>> get allLocations {
-    final stored = _box.get('location_list', defaultValue: []);
-    return List<Map<String, dynamic>>.from((stored as List).map((e) => Map<String, dynamic>.from(e)));
-  }
-
   Future<void> addLocation(Map<String, dynamic> newLocation) async {
     final stored = _box.get('location_list', defaultValue: []);
     final locations = List<Map<String, dynamic>>.from((stored as List).map((e) => Map<String, dynamic>.from(e)));
-    locations.add(newLocation);
+
+    // নতুন লোকেশনে ইউনিক আইডি যোগ করুন
+    final newLoc = Map<String, dynamic>.from(newLocation);
+    if (!newLoc.containsKey('id')) {
+      newLoc['id'] = _uuid.v4(); // ইউনিক আইডি জেনারেট
+    }
+
+    // যদি একই টাইটেলের লোকেশন থাকে তাহলে পুরনোটা রিমুভ করুন
+    final String newTitle = newLoc['title'] ?? 'Home';
+    locations.removeWhere((loc) => loc['title'] == newTitle);
+
+    locations.add(newLoc);
     await _box.put('location_list', locations);
+
+    // নতুন যোগ করা লোকেশনটিকে সিলেক্ট করুন
+    final newIndex = locations.indexWhere((loc) => loc['id'] == newLoc['id']);
+    if (newIndex != -1) {
+      await userSelectDynamicLocation(id: newIndex);
+    }
+
     notifyListeners();
+  }
+
+  List<Map<String, dynamic>> get allLocations {
+    final stored = _box.get('location_list', defaultValue: []);
+    return List<Map<String, dynamic>>.from(
+        (stored as List).map((e) => Map<String, dynamic>.from(e))
+    );
   }
 
   Future<void> deleteLocation(int index) async {
@@ -103,5 +124,10 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
+
+  Map<String, dynamic>? get selectedLocation {
+    if (_selectedDynamicAddressId != null && _selectedDynamicAddressId! < allLocations.length) {return allLocations[_selectedDynamicAddressId!];}
+    return null;
+  }
 
 }

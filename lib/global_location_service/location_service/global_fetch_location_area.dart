@@ -3,6 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:turf/along.dart' as turf;
+import 'package:uuid/uuid.dart';
 import '../location_provider/location_provider.dart';
 
 class FetchLocationArea {
@@ -21,7 +22,15 @@ class FetchLocationArea {
       debugPrint("Name : ${place.name} street : ${place.street}, administrativeArea(Division) : ${place.administrativeArea}, subAdministrativeArea (District): ${place.subAdministrativeArea}, thoroughfare: ${place.thoroughfare}, subThoroughfare: ${place.subThoroughfare}, locality(Area): ${place.locality}, subLocality(Sub-Area): ${place.subLocality}, postalCode: ${place.postalCode}, isoCountryCode: ${place.isoCountryCode}, country: ${place.country}");
 
       if (context.mounted) {
-        await provider.addLocation({'userLong':position.longitude, 'userLat':position.latitude, 'street':"${place.name}", 'icon':'home', 'areaName' : '${place.subLocality}'});
+        await provider.addLocation({
+          'id': const Uuid().v4(), // Unique ID
+          'userLong': position.longitude,
+          'userLat': position.latitude,
+          'street': "${place.name}",
+          'icon': 'home',
+          'areaName': '${place.subLocality}',
+          'title': 'Home' // Default Title
+        });
       }
 
     }catch(e){

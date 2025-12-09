@@ -97,9 +97,7 @@ class LocationProvider with ChangeNotifier {
 
   List<Map<String, dynamic>> get allLocations {
     final stored = _box.get('location_list', defaultValue: []);
-    return List<Map<String, dynamic>>.from(
-        (stored as List).map((e) => Map<String, dynamic>.from(e))
-    );
+    return List<Map<String, dynamic>>.from((stored as List).map((e) => Map<String, dynamic>.from(e)));
   }
 
   Future<void> deleteLocation(int index) async {

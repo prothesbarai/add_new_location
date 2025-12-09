@@ -111,7 +111,6 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
-
   Future<void> updateLocation(int index, Map<String, dynamic> updatedLocation) async {
     final stored = _box.get('location_list', defaultValue: []);
     final locations = List<Map<String, dynamic>>.from((stored as List).map((e) => Map<String, dynamic>.from(e)));
@@ -121,7 +120,6 @@ class LocationProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   Map<String, dynamic>? get selectedLocation {
     if (_selectedDynamicAddressId != null && _selectedDynamicAddressId! < allLocations.length) {return allLocations[_selectedDynamicAddressId!];}
